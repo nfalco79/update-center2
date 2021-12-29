@@ -4,8 +4,10 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.google.common.base.Functions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import hudson.util.VersionNumber;
 import io.jenkins.update_center.BaseMavenRepository;
 import io.jenkins.update_center.Deprecations;
+import io.jenkins.update_center.JenkinsWar;
 import io.jenkins.update_center.MavenRepository;
 import io.jenkins.update_center.Plugin;
 import io.jenkins.update_center.PluginUpdateCenterEntry;
@@ -56,7 +58,10 @@ public class UpdateCenterRoot extends WithSignature {
             plugins.put(plugin.getArtifactId(), entry);
         }
 
-        core = new UpdateCenterCore(repo.getJenkinsWarsByVersionNumber());
+        TreeMap<VersionNumber, JenkinsWar> jenkinsWars = repo.getJenkinsWarsByVersionNumber();
+        if (!jenkinsWars.isEmpty()) { // avoid break update site parser if no jenkins are found
+            core = new UpdateCenterCore(jenkinsWars);
+        }
     }
 
     private static UpdateCenterDeprecation deprecationForPlugin(String artifactId) {

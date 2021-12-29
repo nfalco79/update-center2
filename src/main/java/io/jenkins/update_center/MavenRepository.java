@@ -42,6 +42,8 @@ public interface MavenRepository {
         return resolve(new ArtifactCoordinates(a.groupId, a.artifactId, a.version, packaging));
     }
 
+    String getRepositoryURL();
+
     /**
      * Discover all plugins from this Maven repository in order released, not using PluginHistory.
      * Only the latest release for a given release on a given day will be included.

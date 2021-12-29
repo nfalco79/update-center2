@@ -84,9 +84,9 @@ public class HPI extends MavenArtifact {
     /**
      * Download a plugin via more intuitive URL. This also helps us track download counts.
      */
-    public URL getDownloadUrl() throws MalformedURLException {
-        return new URL(StringUtils.removeEnd(DOWNLOADS_ROOT_URL, "/") + "/plugins/" + artifact.artifactId + "/" + version + "/" + artifact.artifactId + ".hpi");
-    }
+//    public URL getDownloadUrl() throws MalformedURLException {
+//        return new URL(StringUtils.removeEnd(DOWNLOADS_ROOT_URL, "/") + "/plugins/" + artifact.artifactId + "/" + version + "/" + artifact.artifactId + ".hpi");
+//    }
 
     public String getRequiredJenkinsVersion() throws IOException {
         String v = getManifestAttributes().getValue("Jenkins-Version");
@@ -347,7 +347,7 @@ public class HPI extends MavenArtifact {
                 url = readSingleValueFromXmlFile(resolvePOM(), "/project/url");
             }
             // last fallback: GitHub URL; also prevent plugins.j.io referencing itself
-            if (url == null || url.startsWith("https://plugins.jenkins.io")) {
+            if (url == null || url.startsWith(StringUtils.removeEnd(Settings.UPDATE_SITE_URL, "/"))) {
                 url = requireTopLevelUrl(getScmUrl());
             }
             String originalUrl = url;
@@ -541,7 +541,7 @@ public class HPI extends MavenArtifact {
                 }
                 scm = interpolateProjectName(scm);
                 String originalScm = scm;
-                scm = requireHttpsGitHubJenkinsciUrl(scm);
+//                scm = requireHttpsGitHubJenkinsciUrl(scm);
                 if (originalScm != null && scm == null) {
                     LOGGER.log(Level.CONFIG, "Rejecting URL outside GitHub.com/jenkinsci for " + this.artifact.getGav() + ": " + originalScm);
                 }

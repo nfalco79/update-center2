@@ -24,7 +24,6 @@
 package io.jenkins.update_center;
 
 import hudson.util.VersionNumber;
-import io.jenkins.update_center.util.Environment;
 import org.apache.commons.lang.StringUtils;
 
 import java.net.URL;

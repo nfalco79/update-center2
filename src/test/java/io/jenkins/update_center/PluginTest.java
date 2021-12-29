@@ -99,6 +99,11 @@ public class PluginTest extends TestCase {
         public File resolve(ArtifactCoordinates artifact) {
             throw new UnsupportedOperationException();
         }
+
+        @Override
+        public String getRepositoryURL() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     private static HPI registerAndAdd(TestRepository repository, ArtifactCoordinates coordinates, Plugin plugin, long timestamp) throws IOException {

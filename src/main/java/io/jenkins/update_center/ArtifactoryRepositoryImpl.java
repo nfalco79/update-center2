@@ -42,14 +42,15 @@ import java.util.stream.Collectors;
 public class ArtifactoryRepositoryImpl extends BaseMavenRepository {
     private static final Logger LOGGER = Logger.getLogger(ArtifactoryRepositoryImpl.class.getName());
 
-    private static final String ARTIFACTORY_URL = "https://repo.jenkins-ci.org/";
-    private static final String ARTIFACTORY_API_URL = "https://repo.jenkins-ci.org/api/";
+    private static final String ARTIFACTORY_URL = Environment.getString("ARTIFACT_REPOSITORY_URL", "https://repo.jenkins-ci.org/");
+    private static final String ARTIFACTORY_REPOSITORY = Environment.getString("ARTIFACT_REPOSITORY", "releases");
+    private static final String ARTIFACTORY_API_URL = ARTIFACTORY_URL + "api/";
     private static final String ARTIFACTORY_AQL_URL = ARTIFACTORY_API_URL + "search/aql";
     private static final String ARTIFACTORY_MANIFEST_URL = ARTIFACTORY_URL + "%s/%s!/META-INF/MANIFEST.MF";
     private static final String ARTIFACTORY_ZIP_ENTRY_URL = ARTIFACTORY_URL + "%s/%s!%s";
     private static final String ARTIFACTORY_FILE_URL = ARTIFACTORY_URL + "%s/%s";
 
-    private static final String AQL_QUERY = "items.find({\"repo\":{\"$eq\":\"releases\"},\"$or\":[{\"name\":{\"$match\":\"*.hpi\"}},{\"name\":{\"$match\":\"*.jpi\"}},{\"name\":{\"$match\":\"*.war\"}}]}).include(\"repo\", \"path\", \"name\", \"modified\", \"created\", \"sha256\", \"actual_sha1\", \"size\")";
+    private static final String AQL_QUERY = "items.find({\"repo\":{\"$eq\":\"" + ARTIFACTORY_REPOSITORY + "\"},\"$or\":[{\"name\":{\"$match\":\"*.hpi\"}},{\"name\":{\"$match\":\"*.jpi\"}},{\"name\":{\"$match\":\"*.war\"}}]}).include(\"repo\", \"path\", \"name\", \"modified\", \"created\", \"sha256\", \"actual_sha1\", \"size\")";
 
     private final String username;
     private final String password;
@@ -209,7 +210,7 @@ public class ArtifactoryRepositoryImpl extends BaseMavenRepository {
 
     @Override
     public Manifest getManifest(MavenArtifact artifact) throws IOException {
-        try (InputStream is = getFileContent(String.format(ARTIFACTORY_MANIFEST_URL, "releases", getUri(artifact.artifact)))) {
+        try (InputStream is = getFileContent(String.format(ARTIFACTORY_MANIFEST_URL, ARTIFACTORY_REPOSITORY, getUri(artifact.artifact)))) {
             return new Manifest(is);
         }
     }
@@ -241,7 +242,7 @@ public class ArtifactoryRepositoryImpl extends BaseMavenRepository {
             try {
                 OkHttpClient.Builder builder = new OkHttpClient.Builder();
                 OkHttpClient client = builder.build();
-                Request request = new Request.Builder().url(url).get().build();
+                Request request = new Request.Builder().url(url).addHeader("Authorization", Credentials.basic(username, password)).get().build();
                 final Response response = client.newCall(request).execute();
                 if (response.isSuccessful()) {
                     try (final ResponseBody body = HttpHelper.body(response)) {
@@ -280,7 +281,7 @@ public class ArtifactoryRepositoryImpl extends BaseMavenRepository {
 
     @Override
     public InputStream getZipFileEntry(MavenArtifact artifact, String path) throws IOException {
-        return getFileContent(String.format(ARTIFACTORY_ZIP_ENTRY_URL, "releases", getUri(artifact.artifact), StringUtils.prependIfMissing(path, "/")));
+        return getFileContent(String.format(ARTIFACTORY_ZIP_ENTRY_URL, ARTIFACTORY_REPOSITORY, getUri(artifact.artifact), StringUtils.prependIfMissing(path, "/")));
     }
 
     @Override
@@ -291,8 +292,13 @@ public class ArtifactoryRepositoryImpl extends BaseMavenRepository {
         if (localFile.exists()) {
             return localFile;
         }
-        return getFile(String.format(ARTIFACTORY_FILE_URL, "releases", uri));
+        return getFile(String.format(ARTIFACTORY_FILE_URL, ARTIFACTORY_REPOSITORY, uri));
     }
 
     private static final File LOCAL_REPO = new File(new File(System.getProperty("user.home")), ".m2/repository");
+
+    @Override
+    public String getRepositoryURL() {
+        return ARTIFACTORY_URL + ARTIFACTORY_REPOSITORY;
+    }
 }

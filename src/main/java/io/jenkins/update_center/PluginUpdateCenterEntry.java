@@ -2,6 +2,7 @@ package io.jenkins.update_center;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import hudson.util.VersionNumber;
+import io.jenkins.update_center.util.Environment;
 import io.jenkins.update_center.util.JavaSpecificationVersion;
 
 import javax.annotation.CheckForNull;
@@ -20,6 +21,8 @@ import java.util.logging.Logger;
  *
  */
 public class PluginUpdateCenterEntry {
+    private static final String WIKI_URL = Environment.getString("WIKI_ROOT_URL", "https://plugins.jenkins.io/");
+
     /**
      * Plugin artifact ID.
      */
@@ -88,7 +91,7 @@ public class PluginUpdateCenterEntry {
      */
     @JSONField
     public String getWiki() {
-        return "https://plugins.jenkins.io/" + artifactId;
+        return WIKI_URL + artifactId;
     }
 
     String getPluginUrl() throws IOException {

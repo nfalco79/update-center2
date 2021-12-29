@@ -1,6 +1,8 @@
 package io.jenkins.update_center.json;
 
 import com.alibaba.fastjson.annotation.JSONField;
+
+import io.jenkins.update_center.Settings;
 import io.jenkins.update_center.HPI;
 
 import java.io.IOException;
@@ -48,6 +50,6 @@ class ReleaseHistoryEntry {
         version = hpi.version;
         this.gav = hpi.artifact.getGav();
         timestamp = hpi.repository.getMetadata(hpi).timestamp;
-        url = "https://plugins.jenkins.io/" + hpi.artifact.artifactId;
+        url = Settings.UPDATE_SITE_URL + hpi.artifact.artifactId;
     }
 }

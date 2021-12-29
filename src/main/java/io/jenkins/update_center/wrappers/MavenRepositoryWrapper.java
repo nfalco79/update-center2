@@ -63,4 +63,9 @@ public class MavenRepositoryWrapper implements MavenRepository {
     public Collection<Plugin> listJenkinsPlugins() throws IOException {
         return base.listJenkinsPlugins();
     }
+
+    @Override
+    public String getRepositoryURL() {
+        return base.getRepositoryURL();
+    }
 }

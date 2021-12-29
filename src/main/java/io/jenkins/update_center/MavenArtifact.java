@@ -137,7 +137,7 @@ public class MavenArtifact {
      * @throws MalformedURLException if the resulting URL is invalid
      */
     public URL getDownloadUrl() throws MalformedURLException {
-        return new URL("repo.jenkins-ci.org/public/"+artifact.groupId.replace('.','/')+"/"+artifact.artifactId+"/"+artifact.version+"/"+artifact.artifactId+"-"+artifact.version+"."+artifact.packaging);
+        return new URL(repository.getRepositoryURL()+"/"+artifact.groupId.replace('.','/')+"/"+artifact.artifactId+"/"+artifact.version+"/"+artifact.artifactId+"-"+artifact.version+"."+artifact.packaging);
     }
 
     @Override
