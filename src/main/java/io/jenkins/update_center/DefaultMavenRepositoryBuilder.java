@@ -18,7 +18,7 @@ public class DefaultMavenRepositoryBuilder {
             if (ARTIFACTORY_API_PASSWORD != null && ARTIFACTORY_API_USERNAME != null) {
                 instance = new ArtifactoryRepositoryImpl(ARTIFACTORY_API_USERNAME, ARTIFACTORY_API_PASSWORD);
             } else {
-                throw new IllegalStateException("ARTIFACTORY_USERNAME and ARTIFACTORY_PASSWORD need to be set");
+                instance = new MavenCentralRepositoryImpl();
             }
         }
         return instance;

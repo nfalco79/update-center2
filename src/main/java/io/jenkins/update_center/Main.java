@@ -138,6 +138,8 @@ public class Main {
     @Option(name = "--generate-platform-plugins", usage = "Generate platform-plugins.json (to override wizard suggestions)")
     public boolean generatePlatformPlugins;
 
+    @Option(name = "--skip-signature", usage = "Skip signature of update center files (mostly useful during development)")
+    public boolean skipSignature;
 
     /* Configure options modifying output */
     @Option(name = "--pretty-json", usage = "Pretty-print JSON files")
@@ -262,10 +264,15 @@ public class Main {
             updateCenterRoot.id = id;
             updateCenterRoot.connectionCheckUrl = connectionCheckUrl;
 
-            final String signedUpdateCenterJson = updateCenterRoot.encodeWithSignature(signer, prettyPrint);
-            writeToFile(updateCenterPostCallJson(signedUpdateCenterJson), new File(www, UPDATE_CENTER_JSON_FILENAME));
-            writeToFile(signedUpdateCenterJson, new File(www, UPDATE_CENTER_ACTUAL_JSON_FILENAME));
-            writeToFile(updateCenterPostMessageHtml(signedUpdateCenterJson), new File(www, UPDATE_CENTER_JSON_HTML_FILENAME));
+            final String updateCenterJson;
+            if (skipSignature) {
+                updateCenterJson = updateCenterRoot.encode(prettyPrint);
+            } else {
+                updateCenterJson = updateCenterRoot.encodeWithSignature(signer, prettyPrint);
+            }
+            writeToFile(updateCenterPostCallJson(updateCenterJson), new File(www, UPDATE_CENTER_JSON_FILENAME));
+            writeToFile(updateCenterJson, new File(www, UPDATE_CENTER_ACTUAL_JSON_FILENAME));
+            writeToFile(updateCenterPostMessageHtml(updateCenterJson), new File(www, UPDATE_CENTER_JSON_HTML_FILENAME));
         }
 
         if (generatePluginDocumentationUrls) {

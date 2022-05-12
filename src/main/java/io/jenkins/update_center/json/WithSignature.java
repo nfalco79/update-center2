@@ -21,7 +21,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Support generation of JSON output with included checksum + signatures block for the same JSON output.
  */
-public abstract class WithSignature {
+public abstract class WithSignature extends WithoutSignature {
     private JsonSignature signature;
     private final String generationTimestamp = DateTimeFormatter.ISO_DATE_TIME.format(Instant.now().atOffset(ZoneOffset.UTC).withNano(0));
 

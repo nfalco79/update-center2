@@ -35,7 +35,7 @@ public class GitHubSource {
     private void init() {
         try {
             if (GITHUB_API_USERNAME != null && GITHUB_API_PASSWORD != null) {
-                this.initializeOrganizationData("jenkinsci");
+                this.initializeOrganizationData(GITHUB_API_USERNAME);
             } else {
                 throw new IllegalStateException("GITHUB_USERNAME and GITHUB_PASSWORD must be set");
             }
@@ -74,7 +74,7 @@ public class GitHubSource {
             // TODO remove use of json-lib
             JSONObject jsonObject = new JSONObject();
             jsonObject.put("query", String.format("{%n" +
-                            "  organization(login: %s) {%n" +
+                            "  repositoryOwner(login: %s) {%n" +
                             "    repositories(first: 100, after: %s) {%n" +
                             "      pageInfo {%n" +
                             "        startCursor%n" +
@@ -124,7 +124,7 @@ public class GitHubSource {
                 throw new IOException(jsonResponse.getString("message"));
             }
 
-            JSONObject repositories = jsonResponse.getJSONObject("data").getJSONObject("organization").getJSONObject("repositories");
+            JSONObject repositories = jsonResponse.getJSONObject("data").getJSONObject("repositoryOwner").getJSONObject("repositories");
 
             hasNextPage = repositories.getJSONObject("pageInfo").getBoolean("hasNextPage");
             endCursor = repositories.getJSONObject("pageInfo").getString("endCursor");

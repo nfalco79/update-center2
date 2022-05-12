@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
@@ -19,5 +20,16 @@ public class WithoutSignature {
         } else {
             JSON.writeJSONString(Files.newBufferedWriter(file.toPath(), StandardCharsets.UTF_8), this, SerializerFeature.DisableCircularReferenceDetect);
         }
+    }
+
+    public String encode(boolean pretty) throws IOException {
+        StringWriter writer = new StringWriter();
+        if (pretty) {
+            JSON.writeJSONString(writer, this, SerializerFeature.DisableCircularReferenceDetect, SerializerFeature.PrettyFormat);
+        } else {
+            JSON.writeJSONString(writer, this, SerializerFeature.DisableCircularReferenceDetect);
+        }
+        
+        return writer.toString();
     }
 }

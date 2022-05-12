@@ -60,8 +60,6 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.net.URL;
-import java.net.MalformedURLException;
 
 /**
  * A particular version of a plugin and its metadata.
@@ -489,27 +487,6 @@ public class HPI extends MavenArtifact {
         str = str.replace("${project.artifactId}", artifact.artifactId);
         str = str.replace("${artifactId}", artifact.artifactId);
         return str;
-    }
-
-    private String requireHttpsGitHubJenkinsciUrl(String url) {
-        if (url == null) {
-            return null;
-        }
-        if (url.contains("github.com:jenkinsci/") || url.contains("github.com/jenkinsci/")) {
-            // We're only doing weird thing for GitHub URLs that map somewhat cleanly from developerConnection to browsable URL.
-            // Also limit to jenkinsci because that's what people should be using anyway.
-            String githubUrl = url.substring(url.indexOf("github.com"));
-            githubUrl = githubUrl.replace(":", "/");
-            if (githubUrl.endsWith(".git")) {
-                // all should, but not all do
-                githubUrl = githubUrl.substring(0, githubUrl.lastIndexOf(".git"));
-            }
-            if (githubUrl.endsWith("/")) {
-                githubUrl = githubUrl.substring(0, githubUrl.lastIndexOf("/"));
-            }
-            return "https://" + githubUrl;
-        }
-        return null;
     }
 
     private String requireGitHubRepoExistence(String url) {
