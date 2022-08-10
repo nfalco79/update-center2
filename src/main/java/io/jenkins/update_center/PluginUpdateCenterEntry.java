@@ -3,7 +3,6 @@ package io.jenkins.update_center;
 import com.alibaba.fastjson.annotation.JSONField;
 import hudson.util.VersionNumber;
 import io.jenkins.update_center.util.Environment;
-import io.jenkins.update_center.util.JavaSpecificationVersion;
 
 import javax.annotation.CheckForNull;
 import java.io.IOException;
@@ -130,11 +129,6 @@ public class PluginUpdateCenterEntry {
 
     public String getCompatibleSinceVersion() throws IOException {
         return latestOffered.getCompatibleSinceVersion();
-    }
-
-    public String getMinimumJavaVersion() throws IOException {
-        final JavaSpecificationVersion minimumJavaVersion = latestOffered.getMinimumJavaVersion();
-        return minimumJavaVersion == null ? null : minimumJavaVersion.toString();
     }
 
     public String getBuildDate() throws IOException {
