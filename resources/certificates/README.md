@@ -28,3 +28,12 @@ As of May 2020, Kohsuke, Oleg Nenashev, and Olivier Vernin have the correspondin
 
 [INFRA-1502]: https://issues.jenkins-ci.org/browse/INFRA-1502
 [src]: https://github.com/jenkinsci/jenkins/blob/f5ac512bd4e6d3bf041672d179a97f8dfd900e8b/war/src/main/webapp/WEB-INF/update-center-rootCAs/jenkins-update-center-root-ca
+
+
+## `nfalco-update-center-ca.crt`
+
+This self signed certificate is used to sign and trust the alternative update site `https://nfalco79.github.io/update-center.json`.
+
+This certificate is valid from 2022-08-11 to 2032-08-11.
+
+This certificate can be put into https://<jenkins URL>/updatesites/ to validate the integrity of nfalco JSON update site file.

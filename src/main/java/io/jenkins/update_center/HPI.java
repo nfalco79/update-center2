@@ -79,13 +79,6 @@ public class HPI extends MavenArtifact {
         return plugin;
     }
 
-    /**
-     * Download a plugin via more intuitive URL. This also helps us track download counts.
-     */
-//    public URL getDownloadUrl() throws MalformedURLException {
-//        return new URL(StringUtils.removeEnd(DOWNLOADS_ROOT_URL, "/") + "/plugins/" + artifact.artifactId + "/" + version + "/" + artifact.artifactId + ".hpi");
-//    }
-
     public String getRequiredJenkinsVersion() throws IOException {
         String v = getManifestAttributes().getValue("Jenkins-Version");
         if (v!=null)        return v;
