@@ -90,7 +90,7 @@ public class PluginUpdateCenterEntry {
      */
     @JSONField
     public String getWiki() {
-        return WIKI_URL + artifactId;
+        return String.format(WIKI_URL, artifactId);
     }
 
     String getPluginUrl() throws IOException {

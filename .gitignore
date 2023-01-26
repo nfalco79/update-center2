@@ -23,3 +23,6 @@
 # Mac OS X
 .DS_Store
 /CA/
+/update-center.actual.json
+/update-center.json
+/update-center.json.html

@@ -258,13 +258,6 @@ public class Main {
         metadataWriter.writeMetadataFiles(repo, www);
 
         if (!skipUpdateCenter) {
-            if (StringUtils.isEmpty(id)) {
-                throw new IllegalArgumentException("--id argument is empty");
-            }
-            if (StringUtils.isEmpty(connectionCheckUrl)) {
-                throw new IllegalArgumentException("--connection-check-url argument is empty");
-            }
-
             UpdateCenterRoot updateCenterRoot = new UpdateCenterRoot(repo, new File(Main.resourcesDir, WARNINGS_JSON_FILENAME));
             updateCenterRoot.id = id;
             updateCenterRoot.connectionCheckUrl = connectionCheckUrl;

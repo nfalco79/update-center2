@@ -43,10 +43,10 @@ import okhttp3.ResponseBody;
 public class MavenCentralRepositoryImpl extends BaseMavenRepository {
     private static final Logger LOGGER = Logger.getLogger(MavenCentralRepositoryImpl.class.getName());
 
+    private static final String REPO_MAVEN_URL = "https://repo1.maven.org/maven2";
     private static final String SEARCH_MAVEN_URL = "https://search.maven.org";
     private static final String SEARCH_MAVEN_SEARCH_URL = SEARCH_MAVEN_URL + "/solrsearch/select?q=%s";
     private static final String SEARCH_MAVEN_DOWNLOAD_URL = SEARCH_MAVEN_URL + "/remotecontent?filepath=%s";
-    private static final String ARTIFACT_MANIFEST_URL = SEARCH_MAVEN_DOWNLOAD_URL + "!%s";
 
     private File cacheDirectory = new File(Environment.getString("ARTIFACTORY_CACHEDIR", "caches/artifactory"));
 
@@ -269,6 +269,6 @@ public class MavenCentralRepositoryImpl extends BaseMavenRepository {
 
     @Override
     public String getRepositoryURL() {
-        return SEARCH_MAVEN_URL;
+    	return REPO_MAVEN_URL;
     }
 }
