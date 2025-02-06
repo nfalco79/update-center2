@@ -1,2 +1,1 @@
-java -DWIKI_ROOT_URL="https://github.com/nfalco79/%s-plugin/wiki" -DGITHUB_USERNAME=nfalco79 io.jenkins.update_center.Main --id nfalco79 --pretty-json --certificate=${workspace_loc:update-center2}/resources/certificates/nfalco-update-center.crt
---key="C:\Users\NikolasFalco\Documents\keys\nfalco-update-center.pem"
+java "-DWIKI_ROOT_URL=https://github.com/nfalco79/%s-plugin/wiki" "-DGITHUB_USERNAME=nfalco79" io.jenkins.update_center.Main --id nfalco79 --pretty-json --certificate "${workspace_loc:update-center2}/resources/certificates/nfalco-update-center.crt" --key "C:\Users\NikolasFalco\Documents\keys\nfalco-update-center.pem"
