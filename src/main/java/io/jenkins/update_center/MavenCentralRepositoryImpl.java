@@ -1,8 +1,5 @@
 package io.jenkins.update_center;
 
-import com.alibaba.fastjson.JSON;
-import io.jenkins.update_center.util.Environment;
-import io.jenkins.update_center.util.HttpHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,12 +19,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -35,6 +27,17 @@ import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.output.TeeOutputStream;
+
+import com.alibaba.fastjson.JSON;
+
+import io.jenkins.update_center.util.Environment;
+import io.jenkins.update_center.util.HttpHelper;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 public class MavenCentralRepositoryImpl extends BaseMavenRepository {
     private static final Logger LOGGER = Logger.getLogger(MavenCentralRepositoryImpl.class.getName());
@@ -96,14 +99,27 @@ public class MavenCentralRepositoryImpl extends BaseMavenRepository {
         LOGGER.log(Level.INFO, "Initializing " + this.getClass().getName());
 
         OkHttpClient client = new OkHttpClient.Builder().build();
-        RequestBody requestBody = RequestBody.create(("{\r\n"
-                + "    \"page\": 0,\r\n"
-                + "    \"size\": 20,\r\n"
-                + "    \"searchTerm\": \"com.github.nfalco79\",\r\n"
-                + "    \"filter\": [\r\n"
-                + "        \"namespace:com.github.nfalco79\"\r\n"
-                + "    ]\r\n"
-                + "}").getBytes(), MediaType.parse("application/json"));
+        listPluginsByGroupId(client, "com.github.nfalco79");
+        listPluginsByGroupId(client, "io.github.nfalco79");
+        this.plugins = this.files.values().stream().filter(it -> "hpi".equals(it.packaging)).map(MavenCentralRepositoryImpl::toGav).filter(Objects::nonNull).collect(Collectors.toSet());
+        this.wars = this.files.values().stream().filter(it -> "war".equals(it.packaging)).map(MavenCentralRepositoryImpl::toGav).collect(Collectors.toSet());
+        LOGGER.log(Level.INFO, "Initialized " + this.getClass().getName());
+    }
+
+    private void listPluginsByGroupId(OkHttpClient client, String groupId) throws IOException {
+        String jsonRequest = """
+            {
+                "page": 0,
+                "size": 20,
+                "searchTerm": "groupId",
+                "filter": [
+                    "namespace:groupId"
+                ]
+            }
+            """;
+        RequestBody requestBody = RequestBody.create(
+                (jsonRequest.replaceAll("groupId", groupId)).getBytes(),
+                MediaType.parse("application/json"));
         Request request = new Request.Builder().url(SEARCH_MAVEN_SEARCH_URL)
                 .post(requestBody)
                 .build();
@@ -112,9 +128,6 @@ public class MavenCentralRepositoryImpl extends BaseMavenRepository {
             SearchResult result = JSON.parseObject(body.byteStream(), mediaType == null ? StandardCharsets.UTF_8 : mediaType.charset(), SearchResult.class);
             result.components.forEach(it -> this.files.put(it.namespace + ":" + it.name, it));
         }
-        this.plugins = this.files.values().stream().filter(it -> "hpi".equals(it.packaging)).map(MavenCentralRepositoryImpl::toGav).filter(Objects::nonNull).collect(Collectors.toSet());
-        this.wars = this.files.values().stream().filter(it -> "war".equals(it.packaging)).map(MavenCentralRepositoryImpl::toGav).collect(Collectors.toSet());
-        LOGGER.log(Level.INFO, "Initialized " + this.getClass().getName());
     }
 
     private String hexToBase64(String hex) throws IOException {
